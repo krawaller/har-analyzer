@@ -18,7 +18,9 @@ const colors = [
   'silver',
 ];
 
-const getEntryPerMime = harJson => Object.values(harJson.log.entries.reduce((acc, entry) => {
+const getEntryPerMime = (harJson, excludedEntries) => Object.values(harJson.log.entries.reduce((acc, entry, index) => {
+  if (excludedEntries.indexOf(index) > -1) return acc;
+
   const { mimeType } = entry.response.content;
   const initiatorType = entry._initiator.type;
 
@@ -52,12 +54,37 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    const entryPerMime = getEntryPerMime(this.props.harJson);
+    this.handleToggleExclude = this.handleToggleExclude.bind(this);
 
-    this.setState({ entryPerMime });
+    const entryPerMime = getEntryPerMime(this.props.harJson, []);
+
+    this.setState({
+      entryPerMime,
+      excludedEntries: []
+    });
   }
 
-  render({ harJson }, { entryPerMime }) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.excludedEntries !== this.state.excludedEntries) {
+      const entryPerMime = getEntryPerMime(this.props.harJson, this.state.excludedEntries);
+
+      this.setState(() => ({
+        entryPerMime,
+      }));
+    }
+  }
+
+  handleToggleExclude({ target }) {
+    const index = +target.name;
+
+    this.setState((state) => ({
+      excludedEntries: state.excludedEntries.indexOf(index) === -1
+        ? [...state.excludedEntries, index]
+        : state.excludedEntries.filter((i) => i !== index)
+    }));
+  };
+
+  render({ harJson }, { entryPerMime, excludedEntries }) {
     return (
       <div>
         <h1>HAR analyzer</h1>
@@ -94,7 +121,7 @@ export default class App extends Component {
           <tbody>
             {entryPerMime && entryPerMime
                 .map(({ contentSize, color, count, endTime, initiatorType, mimeType, startTime }) => (
-                <tr className={`bg-${color}`} key={mimeType}>
+                <tr className={`bg-${color}`} key={mimeType+initiatorType}>
                   <td>{mimeType}</td>
                   <td>{initiatorType}</td>
                   <td>{count}</td>
@@ -120,8 +147,16 @@ export default class App extends Component {
         }}
       >
           <tbody>
-            {harJson.log.entries.map(entry => (
+            {harJson.log.entries.map((entry, index) => (
               <tr className={`bg-${(entryPerMime.find(e => e.mimeType === entry.response.content.mimeType) || {}).color}`}>
+                <td>
+                  <input
+                    checked={excludedEntries.indexOf(index) === -1}
+                    name={index}
+                    onChange={this.handleToggleExclude}
+                    type="checkbox"
+                  />
+                </td>
                 <td><SecondsFormat time={entry.time} /></td>
                 <td>{entry.response.content.mimeType}</td>
                 <td>{entry._initiator.type}</td>
