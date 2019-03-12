@@ -56,16 +56,18 @@ export default class App extends Component {
 
     this.handleToggleExclude = this.handleToggleExclude.bind(this);
 
-    const entryPerMime = getEntryPerMime(this.props.harJson, []);
+    if (this.props.harJson) {
+      const entryPerMime = getEntryPerMime(this.props.harJson, []);
 
-    this.setState({
-      entryPerMime,
-      excludedEntries: []
-    });
+      this.setState({
+        entryPerMime,
+        excludedEntries: []
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.excludedEntries !== this.state.excludedEntries) {
+    if (prevState.excludedEntries !== this.state.excludedEntries || prevProps.harJson !== this.props.harJson) {
       const entryPerMime = getEntryPerMime(this.props.harJson, this.state.excludedEntries);
 
       this.setState(() => ({
