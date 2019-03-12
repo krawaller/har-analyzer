@@ -1,0 +1,15 @@
+{
+  "name": "har-analyzer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "dependencies": {
+    "preact": "^8.4.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.0"
+  }
+}
