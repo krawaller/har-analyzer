@@ -1,21 +1,17 @@
 import { h, Component } from 'preact';
-import App from './App';
-import dropHandler from './lib/drop-handler';
+import App from '../App';
+import dropHandler from '../lib/drop-handler';
 
 export default class DropZone extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      harJson: null,
-    };
 
     const dh = dropHandler(document.body);
 
     dh.addEventListener('fileLoaded', ({ detail: { content, file } }) => {
       const harJson = JSON.parse(content);
 
-      this.setState({
+      this.props.onFileLoaded({
         fileName: file.name,
         fileLastModifiedDate: file.lastModifiedDate.toString(),
         harJson,
@@ -23,7 +19,7 @@ export default class DropZone extends Component {
     });
   }
 
-  render(props, { fileName, fileLastModifiedDate, harJson }) {
+  render({ fileName, fileLastModifiedDate, harJson }) {
     if (!harJson) {
       return (
         <div
@@ -53,7 +49,7 @@ export default class DropZone extends Component {
           <div>{fileLastModifiedDate}</div>
         </header>
 
-        <App harJson={this.state.harJson} />
+        <App harJson={harJson} />
       </div>
     );
   }

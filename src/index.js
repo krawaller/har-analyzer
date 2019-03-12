@@ -1,4 +1,10 @@
 import { h, render } from 'preact';
-import DropZone from './DropZone';
+import { Provider } from 'preact-redux';
+import store from './store';
+import DropZoneContainer from './file-management/DropZoneContainer';
 
-render(<DropZone />, document.body);
+render((
+  <Provider store={store}>
+    <DropZoneContainer />
+  </Provider>
+), document.body);
