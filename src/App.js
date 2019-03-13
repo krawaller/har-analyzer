@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import MimeTimeline from './MimeTimeline';
 import SecondsFormat from './SecondsFormat';
+import FileView from './FileView';
 
 const colors = [
   'blue',
@@ -107,6 +108,8 @@ export default class App extends Component {
             </li>
           ))}
         </ul>
+
+        <FileView harJson={harJson} />
 
         <table style={{ width: '100%', marginBottom: '50px' }}>
           <thead>
