@@ -19,7 +19,7 @@ const FileView = ({ harJson }) => {
   const beginning = +new Date(harJson.log.pages[0].startedDateTime);
   let entries = harJson.log.entries.map(entry => {
     const desc = (entry.response.content.text.match(
-      /\.modules\.indexOf\("(.*?)"\)/
+      /\.modules\.indexOf\("((\/[^\/\)]*){3})/
     ) || entry.request.url.match(/^https?:\/\/[^\/]*\/([^ ?]*)/))[1]
       .replace(/-/g, "‑")
       .replace(/[a-z0-9]{40}/, "GUID");
